@@ -39,6 +39,7 @@ function New-LogFile {
             $lF = Join-Path -Path $dir -ChildPath (New-Guid).guid -AdditionalChildPath ".log"
         }
     }
+    
     $Script:Logs.File = $lf 
     $Script:Logs.Logs = $logMessage
     return $Script:Logs

@@ -38,3 +38,17 @@ Describe "New-logfile" {
         Remove-Module pwsh-logs
     }
 }
+
+Describe "Get-LogDate" {
+    BeforeAll {
+        Import-Module '.\pwsh-logs.psm1' -Force
+    }
+
+    It "date" {
+        $date = Get-Date -Format "yyyy-MM-dd"
+        Get-Logdate | Should -Match $date
+    }
+    AfterAll {
+        Remove-Item 'pwsh-logs'
+    }
+}
