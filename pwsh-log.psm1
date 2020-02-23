@@ -144,17 +144,18 @@ function Get-TempLocation {
     }
     return $temp
 }
+
 function Get-LogFile {
     [CmdLetBinding()]
     param(
 
-        # InputObject
+        # LogObject
         [Parameter(Mandatory = $false)]
         [psobject]
-        $InputObject = $Script:Logs
+        $LogObject = $Script:Logs
     )
 
-    return (Get-Content $InputObject.File)
+    return (Get-Content $LogObject.File)
 }
 
 function Write-LogError {
@@ -169,13 +170,19 @@ function Write-LogError {
         # Input Log Object
         [parameter(Mandatory = $false)]
         [psobject]
-        $InputObject = $Script:Logs
+        $LogObject = $Script:Logs
     )
 
-    $logMessage = New-LogEntry -Type ERROR -Message $Message
-    $log = ConvertTo-LogMessageString -LogObject $logMessage
-    Out-File -FilePath $InputObject.File -Encoding utf8 -InputObject $log -Append
-    $InputObject.Logs += $LogMessage
+    try{
+        $logMessage = New-LogEntry -Type ERROR -Message $Message
+        $log = ConvertTo-LogMessageString -LogObject $logMessage
+        Out-File -FilePath $LogObject.File -Encoding utf8 -InputObject $log -Append
+        $LogObject.Logs += $LogMessage
+    }
+    catch{
+        $message = "Log was not object was not found.  New-LogFile must be run first or a LogObject must be used with this method."
+        Write-Error -Message $message -ErrorAction Stop
+    }
 }
 
 function Stop-Log {
@@ -184,9 +191,9 @@ function Stop-Log {
         # Log object
         [parameter(Mandatory = $false)]
         [psobject]
-        $InputObject = $Script:Logs
+        $LogObject = $Script:Logs
     )
-    Write-LogNote -Message "End of Log" -InputObject $InputObject
+    Write-LogNote -Message "End of Log" -LogObject $LogObject
     $Script:Logs = $null
 }
 
@@ -195,8 +202,8 @@ function Remove-Log {
           # Log object
           [parameter(Mandatory = $false)]
           [psobject]
-          $InputObject = $Script:Logs
+          $LogObject = $Script:Logs
       )
-      Remove-Item -Path $InputObject.File -Force
-      $InputObject = $null
+      Remove-Item -Path $LogObject.File -Force
+      $LogObject = $null
 }
