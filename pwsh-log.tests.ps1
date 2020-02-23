@@ -157,12 +157,13 @@ Describe "Write-LogError" {
         Import-Module '.\pwsh-log.psm1' -Force
     }
 
-    Context "Test Error Message" {
-
-        Write-LogError -Message "log"
-        It "Message should be type Error" {
-            Assertion
+    Context "No LogObject Found" {       
+        It "No LogObject should Throw" {
+            {Write-LogError -Message "log"} | Should -Throw
         }
+    }
+    Context "" {
+        
     }
 
     AfterAll {
