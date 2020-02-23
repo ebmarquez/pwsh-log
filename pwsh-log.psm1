@@ -155,7 +155,12 @@ function Get-LogFile {
         $LogObject = $Script:Logs
     )
 
-    return (Get-Content $LogObject.File)
+    try {
+        return (Get-Content $LogObject.File)
+    }
+    catch {
+        Write-Error -Message "No LogObject found."
+    }
 }
 
 function Write-LogError {
@@ -173,13 +178,13 @@ function Write-LogError {
         $LogObject = $Script:Logs
     )
 
-    try{
+    try {
         $logMessage = New-LogEntry -Type ERROR -Message $Message
         $log = ConvertTo-LogMessageString -LogObject $logMessage
         Out-File -FilePath $LogObject.File -Encoding utf8 -InputObject $log -Append
         $LogObject.Logs += $LogMessage
     }
-    catch{
+    catch {
         $message = "Log was not object was not found.  New-LogFile must be run first or a LogObject must be used with this method."
         Write-Error -Message $message -ErrorAction Stop
     }
@@ -193,17 +198,29 @@ function Stop-Log {
         [psobject]
         $LogObject = $Script:Logs
     )
-    Write-LogNote -Message "End of Log" -LogObject $LogObject
-    $Script:Logs = $null
+    try {
+        Write-LogNote -Message "End of Log" -LogObject $LogObject
+        $Script:Logs = $null
+    }
+    catch {
+        $message = "Log was not object was not found."
+        Write-Error -Message $message    
+    }
 }
 
 function Remove-Log {
     param(
-          # Log object
-          [parameter(Mandatory = $false)]
-          [psobject]
-          $LogObject = $Script:Logs
-      )
-      Remove-Item -Path $LogObject.File -Force
-      $LogObject = $null
+        # Log object
+        [parameter(Mandatory = $false)]
+        [psobject]
+        $LogObject = $Script:Logs
+    )
+    try {
+        Remove-Item -Path $LogObject.File -Force
+        $LogObject = $null
+    }
+    catch {
+        $message = "Log was not object was not found."
+        Write-Error -Message $message    
+    }
 }
