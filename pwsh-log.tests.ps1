@@ -1,4 +1,4 @@
-Describe "New-logfile" {
+Describe "New-LogFile" {
     BeforeAll {
         Import-Module ".\pwsh-log.psm1" -force
     }

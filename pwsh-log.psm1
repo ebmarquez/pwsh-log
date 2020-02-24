@@ -4,7 +4,7 @@ $Script:Logs = [pscustomobject]@{ File = ""; Logs = @() }
 function New-LogFile {
     <#
         .SYNOPSIS
-        Start a log files and return an object
+        Start a log files and return a log object.
 
         .OUTPUTS
         psobject (File, Logs), File is the path the to log file, and Logs is the log entries.
@@ -12,13 +12,13 @@ function New-LogFile {
     [CmdletBinding()]
     param (
 
-        # c:\temp\
+        # Path for the log file, if no path is proviced it will default to a temp directory location.
         [Parameter(Mandatory = $false)]
         [ValidateNotNullOrEmpty()]
         [string]
         $Path = (New-TempDirectory),
 
-        # File Name
+        # File Name if no name is provided a GUID will be used.
         [Parameter(Mandatory = $false)]
         [ValidateNotNullOrEmpty()]
         [string]
