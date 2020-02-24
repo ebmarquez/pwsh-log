@@ -182,30 +182,120 @@ function Write-LogError {
         $logMessage = New-LogEntry -Type ERROR -Message $Message
         $log = ConvertTo-LogMessageString -LogObject $logMessage
         Out-File -FilePath $LogObject.File -Encoding utf8 -InputObject $log -Append
-        $LogObject.Logs += $LogMessage
+        $LogObject.Logs += $log
     }
     catch {
         $message = "Log was not object was not found.  New-LogFile must be run first or a LogObject must be used with this method."
         Write-Error -Message $message -ErrorAction Stop
     }
+    return $LogObject
 }
 
-function Stop-Log {
-    param(
-        
-        # Log object
+function Write-LogWarning {
+    [CmdLetBinding()]
+    param (
+
+        # Warning Message
+        [parameter(Mandatory = $false)]
+        [string]
+        $Message,
+
+        # Input Log Object
         [parameter(Mandatory = $false)]
         [psobject]
         $LogObject = $Script:Logs
     )
+
     try {
-        Write-LogNote -Message "End of Log" -LogObject $LogObject
-        $Script:Logs = $null
+        $logMessage = New-LogEntry -Type WARNING -Message $Message
+        $log = ConvertTo-LogMessageString -LogObject $logMessage
+        Out-File -FilePath $LogObject.File -Encoding utf8 -InputObject $log -Append
+        $LogObject.Logs += $log
     }
     catch {
-        $message = "Log was not object was not found."
-        Write-Error -Message $message    
+        $message = "Log was not object was not found.  New-LogFile must be run first or a LogObject must be used with this method."
+        Write-Error -Message $message -ErrorAction Stop
     }
+    return $LogObject
+}
+
+function Write-LogNotification {
+    [CmdLetBinding()]
+    param (
+
+        # Notification Message
+        [parameter(Mandatory = $false)]
+        [string]
+        $Message,
+
+        # Input Log Object
+        [parameter(Mandatory = $false)]
+        [psobject]
+        $LogObject = $Script:Logs
+    )
+
+    try {
+        $logMessage = New-LogEntry -Type NOTIFICATION -Message $Message
+        $log = ConvertTo-LogMessageString -LogObject $logMessage
+        Out-File -FilePath $LogObject.File -Encoding utf8 -InputObject $log -Append
+        $LogObject.Logs += $log
+    }
+    catch {
+        $message = "Log was not object was not found.  New-LogFile must be run first or a LogObject must be used with this method."
+        Write-Error -Message $message -ErrorAction Stop
+    }
+    return $LogObject
+}
+
+function Write-LogDebug {
+    [CmdLetBinding()]
+    param (
+
+        # Debug Message
+        [parameter(Mandatory = $false)]
+        [string]
+        $Message,
+
+        # Input Log Object
+        [parameter(Mandatory = $false)]
+        [psobject]
+        $LogObject = $Script:Logs
+    )
+
+    try {
+        $logMessage = New-LogEntry -Type DEBUG -Message $Message
+        $log = ConvertTo-LogMessageString -LogObject $logMessage
+        Out-File -FilePath $LogObject.File -Encoding utf8 -InputObject $log -Append
+        $LogObject.Logs += $log
+    }
+    catch {
+        $message = "Log was not object was not found.  New-LogFile must be run first or a LogObject must be used with this method."
+        Write-Error -Message $message -ErrorAction Stop
+    }
+    return $LogObject
+}
+
+function Stop-Log {
+    [CmdLetBinding()]
+    param (
+
+    # Input Log Object
+        [parameter(Mandatory = $false)]
+        [psobject]
+        $LogObject = $Script:Logs
+    )
+
+    try {
+        $logMessage = New-LogEntry -Type Notification -Message "End of Log"
+        $log = ConvertTo-LogMessageString -LogObject $logMessage
+        Out-File -FilePath $LogObject.File -Encoding utf8 -InputObject $log -Append
+        $LogObject.Logs += $log
+    }
+    catch {
+        $message = "Log was not object was not found.  New-LogFile must be run first or a LogObject must be used with this method."
+        Write-Error -Message $message -ErrorAction Stop
+    }
+    return $LogObject
 }
 
 function Remove-Log {
@@ -220,7 +310,8 @@ function Remove-Log {
         $LogObject = $null
     }
     catch {
-        $message = "Log was not object was not found."
-        Write-Error -Message $message    
+        $message = "There was a problem with the log removal: $($PSItem.Exception.Message)"
+        Write-Error -Message $message
     }
+    return $true
 }
