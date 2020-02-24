@@ -162,11 +162,133 @@ Describe "Write-LogError" {
             {Write-LogError -Message "log"} | Should -Throw
         }
     }
-    Context "" {
-        
+
+    Context "LogObject" {
+
+        $data = @{
+            File = (Join-Path -Path $TestDrive -ChildPath "test.log")
+            Logs = @(
+                "Test"
+            )
+        }
+        $testMessage = "Test2"
+
+        $log = Write-LogError -Message $testMessage -LogObject $data
+        It "Error Log Object Logs should match $testMessage" {
+            $log.Logs[($log.Logs.count - 1)] | Should -Match $testMessage
+        }
+        It "Error Log file should contain '$("ERROR {0}" -f $testMessage)'" {
+            (Get-Content $log.File) | Should -Match $("ERROR {0}" -f $testMessage)
+        }
     }
 
     AfterAll {
         Remove-Module pwsh-log
     }
 }
+
+Describe "Write-LogWarning" {
+    BeforeAll {
+        Import-Module '.\pwsh-log.psm1' -Force
+    }
+
+    Context "No LogObject Found" {       
+        It "No LogObject should Throw" {
+            {Write-LogWarning -Message "log"} | Should -Throw
+        }
+    }
+
+    Context "LogObject" {
+
+        $data = @{
+            File = (Join-Path -Path $TestDrive -ChildPath "test.log")
+            Logs = @(
+                "Test"
+            )
+        }
+        $testMessage = "Test2"
+
+        $log = Write-LogWarning -Message $testMessage -LogObject $data
+        It "Warning Log Object Logs should match $testMessage" {
+            $log.Logs[($log.Logs.count - 1)] | Should -Match $testMessage
+        }
+        It "Warning Log file should contain '$("WARNING {0}" -f $testMessage)'" {
+            (Get-Content $log.File) | Should -Match $("WARNING {0}" -f $testMessage)
+        }
+    }
+
+    AfterAll {
+        Remove-Module pwsh-log
+    }
+}
+
+Describe "Write-LogNotification" {
+    BeforeAll {
+        Import-Module '.\pwsh-log.psm1' -Force
+    }
+
+    Context "No LogObject Found" {       
+        It "No LogObject should Throw" {
+            {Write-LogNotification -Message "log"} | Should -Throw
+        }
+    }
+
+    Context "LogObject" {
+
+        $data = @{
+            File = (Join-Path -Path $TestDrive -ChildPath "test.log")
+            Logs = @(
+                "Test"
+            )
+        }
+        $testMessage = "Test2"
+
+        $log = Write-LogNotification -Message $testMessage -LogObject $data
+        It "Notification Log Object Logs should match $testMessage" {
+            $log.Logs[($log.Logs.count - 1)] | Should -Match $testMessage
+        }
+        It "Notification Log file should contain '$("NOTIFICATION {0}" -f $testMessage)'" {
+            (Get-Content $log.File) | Should -Match $("NOTIFICATION {0}" -f $testMessage)
+        }
+    }
+
+    AfterAll {
+        Remove-Module pwsh-log
+    }
+}
+
+Describe "Write-LogDebug" {
+    BeforeAll {
+        Import-Module '.\pwsh-log.psm1' -Force
+    }
+
+    Context "No LogObject Found" {       
+        It "No LogObject should Throw" {
+            {Write-LogDebug -Message "log"} | Should -Throw
+        }
+    }
+
+    Context "LogObject" {
+
+        $data = @{
+            File = (Join-Path -Path $TestDrive -ChildPath "test.log")
+            Logs = @(
+                "Test"
+            )
+        }
+        $testMessage = "Test2"
+
+        $log = Write-LogDebug -Message $testMessage -LogObject $data
+        It "Debug Log Object Logs should match $testMessage" {
+            $log.Logs[($log.Logs.count - 1)] | Should -Match $testMessage
+        }
+        It "Debug Log file should contain '$("DEBUG {0}" -f $testMessage)'" {
+            (Get-Content $log.File) | Should -Match $("DEBUG {0}" -f $testMessage)
+        }
+    }
+
+    AfterAll {
+        Remove-Module pwsh-log
+    }
+}
+
